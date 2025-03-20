@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('git clone') {
+            steps {
+                echo 'cloning git from github repo'
+				git branch: 'main', url: 'https://github.com/sravangit13/mindcircuit15d.git'
+				
+            }
+        }
+		
+	stage('build atrifacts') {
+            steps {
+                echo 'building atrifacts using mvn build tool'
+				sh 'mvn clean install'
+            }
+        }
+		
+    stage('tomcat deploy') {
+            steps {
+                echo 'deploying artifacts to tomcat '
+				deploy adapters: [tomcat9(credentialsId: 'tomcat2', path: '', url: 'http://44.193.196.246:8081/')], contextPath: 'instagram', war: '**/*.war'
+            }
+        }
+    }
+}
